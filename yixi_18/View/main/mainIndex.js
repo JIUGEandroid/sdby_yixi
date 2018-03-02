@@ -7,7 +7,11 @@ import {
   View,
 } from 'react-native';
 import { Navigator } from 'react-native-deprecated-custom-components';
-import Show from './show';
+import Show from './show.js';
+import HomePage from './homePage.js';
+import Register from '../login/register.js';
+import Login from '../login/login.js';
+import Splash from '../login/splash.js';
 var nav;
 class mainIndex extends Component {
 
@@ -15,7 +19,7 @@ class mainIndex extends Component {
 	  super(props);
 	
 	  this.state = {
-	  	initialRoute:{name:'show', component:Show},
+	  	initialRoute:{name:'splash', component:Splash},
 	  };
 	}
 
@@ -23,11 +27,23 @@ class mainIndex extends Component {
 		let Component;
 		nav=navigator;
 		switch(route.name){
+			case "splash":
+				Component=Splash;
+				break;
+			case "login":
+				Component=Login;
+				break;
+			case "register":
+				Component=Register;
+				break;
+			case "homePage":
+				Component=HomePage;
+				break;
 			case "show":
 				Component=Show;
 				break;
 			default:
-				Component=Show;
+				Component=Splash;
 				break;
 		}
 		return <Component route={route} navigator={navigator} param={route.param}/>
@@ -35,10 +51,10 @@ class mainIndex extends Component {
 
   render() {
     return (
-	      <Navigator
+	      <Navigator	
 	          initialRoute={this.state.initialRoute}
 	          configureScene={(route) => {
-	            return Navigator.SceneConfigs.VerticalDownSwipeJump;
+	            return Navigator.SceneConfigs.FloatFromRight;
 	          }}
 	          renderScene={this.renderMapper.bind(this)} />
            

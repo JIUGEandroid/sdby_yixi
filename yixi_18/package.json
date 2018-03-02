@@ -9,7 +9,12 @@
   "dependencies": {
     "react": "16.2.0",
     "react-native": "0.52.2",
-    "react-native-deprecated-custom-components": "github:facebookarchive/react-native-custom-components"
+    "react-native-deprecated-custom-components": "github:facebookarchive/react-native-custom-components",
+    "react-native-input-scroll-view": "^1.6.3",
+    "react-native-keyboard-aware-scrollview": "^2.0.0",
+    "react-native-keyboard-spacer": "^0.4.1",
+    "react-native-root-toast": "^3.0.1",
+    "react-native-tab-navigator": "^0.3.4"
   },
   "devDependencies": {
     "babel-jest": "22.1.0",
