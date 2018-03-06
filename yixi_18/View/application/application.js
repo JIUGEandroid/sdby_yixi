@@ -20,7 +20,12 @@ class application extends Component {
   }
 
   goYl(){
-
+    let {navigator}=this.props;
+    if(navigator){
+      navigator.push({
+        name:"yinli",
+      });
+    }
   }
 
   render() {

@@ -12,6 +12,7 @@ import HomePage from './homePage.js';
 import Register from '../login/register.js';
 import Login from '../login/login.js';
 import Splash from '../login/splash.js';
+import Yinli from "../yinli/view/hompage.js";
 var nav;
 class mainIndex extends Component {
 
@@ -41,6 +42,9 @@ class mainIndex extends Component {
 				break;
 			case "show":
 				Component=Show;
+				break;
+			case "yinli":
+				Component=Yinli;
 				break;
 			default:
 				Component=Splash;

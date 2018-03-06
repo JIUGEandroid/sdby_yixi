@@ -9,11 +9,15 @@
   "dependencies": {
     "react": "16.2.0",
     "react-native": "0.52.2",
+    "react-native-banner-carousel": "^1.0.2",
+    "react-native-contacts": "^2.1.2",
     "react-native-deprecated-custom-components": "github:facebookarchive/react-native-custom-components",
     "react-native-input-scroll-view": "^1.6.3",
     "react-native-keyboard-aware-scrollview": "^2.0.0",
     "react-native-keyboard-spacer": "^0.4.1",
+    "react-native-loading-w": "^1.0.0",
     "react-native-root-toast": "^3.0.1",
+    "react-native-scrollable-tab-view": "^0.8.0",
     "react-native-tab-navigator": "^0.3.4"
   },
   "devDependencies": {
