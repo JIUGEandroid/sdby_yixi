@@ -6,11 +6,99 @@ import {
   StyleSheet,
   View,
   Text,
-  Image
+  Image,
+  TouchableOpacity,
 } from 'react-native';
 import {Size,baseColor,iosMargin} from "../../../Tools/constStr.js";
-
+import Tools from '../../../Tools/tool.js';
 class wode extends Component {
+  constructor(props) {
+    super(props);
+  
+    this.state = {
+      comInfo:"",
+      userInfo:"",
+    };
+  }
+
+  toUpGoods(){
+      let {navigator}=this.props;
+      if(navigator){
+          navigator.push({
+              name:"upGoods"
+          });
+      }
+  }
+
+  toAddress(){
+    let {navigator}=this.props;
+      if(navigator){
+          navigator.push({
+              name:"address",
+              param:{
+                code:0,
+              }
+          });
+      }
+  }
+
+  toUpdate(){
+      let {navigator}=this.props;
+      if(navigator){
+          navigator.push({
+              name:"update"
+          });
+      }
+  }
+
+  toMyStore(){
+      let {navigator}=this.props;
+      if(navigator){
+          navigator.push({
+              name:"myStore",
+              param:{
+                userInfo:this.state.userInfo,
+              }
+          });
+      }
+  }
+
+
+  toMyStaff(){
+      let {navigator}=this.props;
+      if(navigator){
+          navigator.push({
+              name:"myStaff"
+          });
+      }
+  }
+
+
+  componentWillMount() {
+      Tools.getStorage("user_info",(resData)=>{
+          let userInfo;
+          let role=JSON.parse(resData).role;
+          if(role==1){
+            userInfo=JSON.parse(resData).business
+          }
+          else if(role==4){
+            userInfo=JSON.parse(resData).driver;
+          }
+          this.setState({
+            comInfo: JSON.parse(resData),
+            userInfo:userInfo,
+          },()=>{
+            console.log("componentDidMount:wode="+JSON.stringify(this.state.userInfo.store_name));
+          });
+          
+          //this.getData();
+      });
+  }
+
+  componentDidMount() {
+
+  }
+
   render() {
     return (
       <View style={{backgroundColor:"#fff",flex:1}}>
@@ -19,15 +107,15 @@ class wode extends Component {
               <Image style={styles.messageIcon} source={require('../icon/xiaoxi.png')}/>
             </View>
             <View style={styles.userInfoView}>
-              <Image style={styles.touxiangIcon} source={require('../icon/fd1.png')}/>
+              <Image style={styles.touxiangIcon} source={this.state.userInfo.store_logo?{uri:this.state.userInfo.store_logo}:require('../icon/fd1.png')}/>
               <View style={styles.userInfoView_midView}>
                 <View style={{flexDirection:'row'}}>
-                  <Text style={{fontSize:Size(20)}}>刘先利</Text>
-                  <View style={styles.passView}>
+                  <Text style={{fontSize:Size(20)}}>{this.state.comInfo.username}</Text>
+                  {this.state.userInfo.check_status!=0&&<View style={styles.passView}>
                     <Text style={{color:'#fff',fontSize:Size(11)}}>已认证</Text>
-                  </View>
+                  </View>}
                 </View>
-                <Text style={{fontSize:Size(18),marginTop:25,color:"#707070"}}>时代博越干杂铺</Text>
+                <Text style={{fontSize:Size(18),marginTop:25,color:"#707070"}}>{this.state.userInfo.store_name}</Text>
               </View>
               <View style={styles.userInfoView_rightView}>
                   <View style={styles.vipView}>
@@ -36,7 +124,7 @@ class wode extends Component {
                   </View>
               </View>
             </View>
-            <View style={styles.itemView}>
+            <TouchableOpacity style={styles.itemView} onPress={()=>this.toUpGoods()}>
                <Image style={styles.icon} source={require('../icon/luru.png')}/>
                <View style={{flex:1}}>
                  <View style={styles.itemView_right}>
@@ -45,18 +133,18 @@ class wode extends Component {
                  </View>
                  <View style={{backgroundColor:'#e0e0e0',height:0.7}}/>
                </View>
-            </View>
-            <View style={[styles.itemView,{marginTop:0}]}>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.itemView,{marginTop:0}]} onPress={()=>this.toUpdate()}>
                <Image style={styles.icon} source={require('../icon/shengji.png')}/>
                <View style={{flex:1}}>
                  <View style={styles.itemView_right}>
                     <Text style={{fontSize:Size(18)}}>升级认证</Text>
                     <Image style={styles.youjiantouView} source={require('../icon/youjiantou.png')}/>
                  </View>
-                 <View style={{backgroundColor:'#e0e0e0',height:0.7}}/>
+                 
                </View>
-            </View>
-             <View style={styles.itemView}>
+            </TouchableOpacity>
+             <TouchableOpacity style={styles.itemView} onPress={()=>this.toMyStore()}>
                <Image style={styles.icon} source={require('../icon/dianpu.png')}/>
                <View style={{flex:1}}>
                  <View style={styles.itemView_right}>
@@ -65,27 +153,27 @@ class wode extends Component {
                  </View>
                  <View style={{backgroundColor:'#e0e0e0',height:0.7}}/>
                </View>
-            </View>
-            <View style={[styles.itemView,{marginTop:0}]}>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.itemView,{marginTop:0}]} onPress={()=>this.toAddress()}>
                <Image style={styles.icon} source={require('../icon/shouhuo.png')}/>
                <View style={{flex:1}}>
                  <View style={styles.itemView_right}>
                     <Text style={{fontSize:Size(18)}}>收货地址</Text>
                     <Image style={styles.youjiantouView} source={require('../icon/youjiantou.png')}/>
                  </View>
-                 <View style={{backgroundColor:'#e0e0e0',height:0.7}}/>
+                 
                </View>
-            </View>
-            <View style={styles.itemView}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.itemView} onPress={()=>this.toMyStaff()}>
                <Image style={styles.icon} source={require('../icon/yuangong.png')}/>
                <View style={{flex:1}}>
                  <View style={styles.itemView_right}>
                     <Text style={{fontSize:Size(18)}}>我的员工</Text>
                     <Image style={styles.youjiantouView} source={require('../icon/youjiantou.png')}/>
                  </View>
-                 <View style={{backgroundColor:'#e0e0e0',height:0.7}}/>
+                 
                </View>
-            </View>
+            </TouchableOpacity>
          </View>
       </View>
     );
@@ -146,7 +234,11 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius:30,
     flexDirection:'row',
     justifyContent:'center',
-    alignItems:'center'
+    alignItems:'center',
+    shadowColor:"#000000",
+    shadowRadius:2,
+    shadowOpacity:0.5,
+    shadowOffset:{width:0,height:0}
   },
   dunpaiIcon:{
     width:20,

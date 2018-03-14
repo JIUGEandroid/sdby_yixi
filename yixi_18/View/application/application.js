@@ -11,7 +11,8 @@ import {
 
 } from 'react-native';
 import {Size,baseColor,iosMargin} from "../Tools/constStr.js";
-
+import Tools from '../Tools/tool.js';
+import Toast from 'react-native-root-toast';
 class application extends Component {
   constructor(props) {
     super(props);
@@ -21,11 +22,30 @@ class application extends Component {
 
   goYl(){
     let {navigator}=this.props;
-    if(navigator){
-      navigator.push({
-        name:"yinli",
-      });
-    }
+/*    if(navigator){
+          navigator.push({
+            name:"chooseRole",
+          });
+        }*/
+    Tools.post("http://yixip.bowyue.com/api/pmember/getPmember",{},(resData)=>{
+      console.log("goYl:"+JSON.stringify(resData));
+      Tools.setStorage("user_info",JSON.stringify(resData));
+      if(navigator){
+        navigator.push({
+          name:"yinli",
+          param:{
+            index:"shangcheng"
+          }
+        });
+      }
+    },(err)=>{
+      //Toast.show(err);
+        if(navigator){
+          navigator.push({
+            name:"chooseRole",
+          });
+        }
+    });
   }
 
   render() {

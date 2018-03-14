@@ -51,11 +51,32 @@ class shangcheng extends Component {
         }
     }
 
+    toCart(){
+        let {navigator}=this.props;
+        if(navigator){
+            this.props.callBack("gouwuche");
+            //navigator.pop();
+        }
+    }
+
+    toDianpu(rowData){
+        let {navigator}=this.props;
+            if(navigator){
+                navigator.push({
+                    name:"dianpu",
+                    param:{
+                        storeData:rowData,
+                        callBack:()=>this.toCart(),
+                    }
+                });
+            }
+    }
+
     getData(){
         Tools.post("http://yixip.bowyue.com/api/plocation/index",{},(resData)=>{
-                console.log("getData:"+JSON.stringify(resData));
+                console.log("getDatashangcheng:"+JSON.stringify(resData.wntj));
                 if(resData.mryx.length>0){
-                    this.listData=resData.mryx;
+                    this.listData=resData.wntj;
                     this.setState({
                     dataSource:this.ds.cloneWithRows(this.listData),
                     loaded:true
@@ -70,6 +91,19 @@ class shangcheng extends Component {
         },(err)=>{
             Toast.show("请求数据失败");
         });
+    }
+
+    toClassify(code){
+        let {navigator}=this.props;
+        if(navigator){
+            navigator.push({
+                name:"classify",
+                param:{
+                    code:code,
+                    
+                }
+            });
+        }
     }
 
 
@@ -89,12 +123,12 @@ class shangcheng extends Component {
         }
     	return(
     		<View>
-	    		<View style={styles.listItem}>
+	    		<TouchableOpacity  onPress={(()=>this.toDianpu(rowData))} style={styles.listItem}>
 	    			<Image style={styles.listItemImg} source={{uri:rowData.store_logo}}/>
 	    			<View style={styles.listItemTextView}>
 	    				<View style={styles.listItemTextViewTop}>
 	    					<View style={{flex:1,flexDirection:'row'}}>
-	    						<Text style={{color:'#454545',fontSize:Size(16)}}>{rowData.store_name}</Text>
+	    						<Text style={{color:'#454545',fontSize:Size(17)}}>{rowData.store_name}</Text>
 	    						{rowData.isPass&&<View style={styles.passView}>
 	    							<Text style={{color:'#fff',fontSize:Size(11)}}>已认证</Text>
 	    						</View>}
@@ -115,7 +149,7 @@ class shangcheng extends Component {
 	    				   </View>
                         </View>
 	    			</View>
-	    		</View>
+	    		</TouchableOpacity>
 	    		<View style={{backgroundColor:'#e1e8f1',height:0.5}}/>
     		</View>
     		);
@@ -155,21 +189,21 @@ class shangcheng extends Component {
 		      		})}
 		      	</View>
 		      	<View style={styles.midView2}>
-		      		<View style={styles.midView2_item}>
+		      		<TouchableOpacity style={styles.midView2_item} onPress={()=>this.toClassify(2)}>
 		      			<Image style={styles.midView2_itemImg} source={require('../icon/dongping.png')}/>
 		      			<View style={styles.midView2_itemInf}>
 		      				<Text style={{fontSize:Size(17),color:"#000000"}}>冻品</Text>
 		      				<Text style={{fontSize:Size(13),color:"#666666"}}>万种生鲜，应有尽有</Text>
 		      			</View>
-		      		</View>
+		      		</TouchableOpacity>
 		      		<View style={{backgroundColor:'#ecf1f0',width:1}}/>
-		      		<View style={styles.midView2_item}>
+		      		<TouchableOpacity style={styles.midView2_item} onPress={()=>this.toClassify(1 )}>
 		      			<Image style={styles.midView2_itemImg} source={require('../icon/ganza.png')}/>
 		      			<View style={styles.midView2_itemInf}>
 		      				<Text style={{fontSize:Size(17),color:"#000000"}}>干杂</Text>
 		      				<Text style={{fontSize:Size(13),color:"#666666"}}>优质优价，直发全国</Text>
 		      			</View>
-		      		</View>
+		      		</TouchableOpacity>
 		      	</View>
 		      	<View style={styles.goodMsg}>
 		      		<Image style={styles.goodMsgImg} source={require('../icon/goodMsg.png')}/>
@@ -204,7 +238,7 @@ class shangcheng extends Component {
       			<TextInput
                     returnKeyType={'search'}
       				underlineColorAndroid="transparent"
-      				multiline = {true}
+      				//multiline = {true}
       				placeholder="舌尖上的中国推荐之重庆毛肚"
       				placeholderTextColor="#707070"
 			        style={styles.textInput}
@@ -212,9 +246,9 @@ class shangcheng extends Component {
 			        value={this.state.searchMsg}
 			      />
       		</View>
-      		<View style={styles.top_rightView}>
+      		<TouchableOpacity style={styles.top_rightView} onPress={()=>this.toCart()}>
       			<Image style={styles.top_Icon} source={require('../icon/car.png')}/>
-      		</View>
+      		</TouchableOpacity>
       	</View>
       	
       	<View style={styles.bottomView}>

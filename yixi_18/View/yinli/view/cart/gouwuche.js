@@ -11,15 +11,20 @@ import {
   TouchableOpacity
 } from 'react-native';
 import {Size,baseColor,iosMargin} from "../../../Tools/constStr.js";
+import Tools from "../../../Tools/tool.js";
+import Toast from 'react-native-root-toast';
+import AllListView from '../../../component/AllListView';
+import LoadingShow from '../../../component/react-native-loading';
 class gouwuche extends Component {
   constructor(props) {
     super(props);
     this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.listData=[{"title":"当日新鲜极品毛肚","store":"时代博越干杂店","price":360,"img":require('../icon/test_cart1.png')},
+/*    this.listData=[{"title":"当日新鲜极品毛肚","store":"时代博越干杂店","price":360,"img":require('../icon/test_cart1.png')},
                   {"title":"当日新鲜极品毛肚","store":"时代博越干杂店","price":180,"img":require('../icon/test_cart2.png')},
                   {"title":"当日新鲜极品毛肚","store":"时代博越干杂店","price":220,"img":require('../icon/test_cart3.png')}
                   ,{"title":"当日新鲜极品毛肚","store":"时代博越干杂店","price":450,"img":require('../icon/test_cart4.png')},
-                  {"title":"当日新鲜极品毛肚","store":"时代博越干杂店","price":450,"img":require('../icon/test_cart4.png')}];
+                  {"title":"当日新鲜极品毛肚","store":"时代博越干杂店","price":450,"img":require('../icon/test_cart4.png')}];*/
+    this.listData=[];
     this.listNum=new Array();
     this.listTag=new Array();
     this.sumPrice=0;
@@ -28,17 +33,72 @@ class gouwuche extends Component {
       tag:0,
       allPrice:0,
       selctAll:false,
+      isDelete:false,
+      loadingWait:false,
+      loadingWaitText:"加载中",
     };
   }
 
-  getData(){
-      for(let i=0;i<this.listData.length;i++){
-        this.listNum[i]=1;
-        this.listTag[i]=false;
-      }
-     this.setState({
-          dataSource:this.ds.cloneWithRows(this.listData),
+  initData(){
+    this.listData=[];
+    this.listNum=new Array();
+    this.listTag=new Array();
+    this.sumPrice=0;
+    this.setState({
+      dataSource: this.ds,
+      tag:0,
+      allPrice:0,
+      selctAll:false,
+      isDelete:false,
+      loadingWait:false,
+      loadingWaitText:"加载中",
+    });
+  }
+
+    showLoading(text){
+        this.setState({
+          loadingWait: true,
+          loadingWaitText:text,
+        });
+     }
+
+    closeLoading(){
+      this.setState({
+        loadingWait: false,
       });
+    }
+
+  getData(){
+     
+      Tools.post("http://yixip.bowyue.com/api/pcart/index",{},(resData)=>{
+        this.closeLoading();
+        if(resData.length>0){
+          this.listData=resData;
+          for(let i=0;i<this.listData.length;i++){
+            this.listNum[i]=resData[i].num;
+            this.listTag[i]=false;
+          }
+         this.setState({
+              dataSource:this.ds.cloneWithRows(this.listData),
+              count:this.listData.length,
+
+          });
+        }
+        else{
+            this.setState({
+               dataSource:this.ds.cloneWithRows([]),
+               count:0,
+            });
+        }
+      },(err)=>{
+        this.closeLoading();
+        Toast.show(err);
+      });
+  }
+
+
+  _onRefresh(){
+    this.getData();
   }
 
   addNum(i){
@@ -64,12 +124,43 @@ class gouwuche extends Component {
   }
 
 
-  delete(){
-
+  delete(rowData){
+    let postData={"id":rowData.id};
+    Tools.post("http://yixip.bowyue.com/api/pcart/del",postData,(resData)=>{
+      Toast.show("已删除");
+      this.getData();
+    },(err)=>{
+      Toast.show(err);
+    });
   }
 
+  //提交订单
   submit(){
-
+    let goodsData=new Array();
+    let goodsNum=new Array();
+    for(let i=0;i<this.listTag.length;i++){
+      if(this.listTag[i]){
+        goodsData.push(this.listData[i]);
+        goodsNum.push(this.listNum[i]);
+      }
+    }
+    if(goodsData.length==0){
+      Toast.show("请选择商品");
+      return;
+    }
+    let {navigator}=this.props;
+      if(navigator){
+          navigator.push({
+            name:"confirmOrder",
+            param:{
+              goodsData:goodsData,
+              goodsNum:goodsNum,
+              allPrice:this.state.allPrice,
+              callBack:()=>this.props.callBack("zhangdan"),
+              initData:()=>this.initData(),
+            }
+          });
+      }
   }
 
   countSum(){
@@ -107,23 +198,31 @@ class gouwuche extends Component {
   }
 
   componentDidMount() {
+     this.showLoading("加载中...");
+    this.getData();
+  }
+  componentWillReceiveProps(nextProps){
+    //console.log("OrderIndex:postData="+JSON.stringify(nextProps.selectTag));
+    //this.showLoading("加载中...");
     this.getData();
   }
 
 
 
-
   renderRow(rowData,i,j){
+    if(!rowData){
+      return;
+    }
     return(
       <View>
         <View style={styles.listItem}>
           <TouchableOpacity onPress={()=>this.selectItem(rowData,j)}>
             <Image style={styles.circle} source={this.listTag[j]?require('../icon/circle_sx.png'):require('../icon/circle.png')}/>
           </TouchableOpacity>
-          <Image style={styles.listItem_img} source={rowData.img}/>
+          <Image style={styles.listItem_img} source={{uri:rowData.logo}}/>
           <View style={styles.listItem_textView}>
-            <Text style={{fontSize:Size(17)}}>{rowData.title}</Text>
-            <Text style={{fontSize:Size(16),marginTop:5,color:"gray"}}>{rowData.store}</Text>
+            <Text style={{fontSize:Size(17)}}>{rowData.name}</Text>
+            <Text style={{fontSize:Size(16),marginTop:5,color:"gray"}}>{rowData.business_p_member_name}</Text>
             <Text style={{fontSize:Size(18),marginTop:13,color:"#e16531"}}>¥{rowData.price}<Text style={{color:"gray",fontSize:Size(15)}}>/件</Text></Text>
           </View>
           <View style={{flex:1,height:70}}>
@@ -136,7 +235,7 @@ class gouwuche extends Component {
                   <Image style={styles.addIcon} source={require('../icon/add.png')}/>
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity style={{flex:1,justifyContent:"flex-end"}} onPress={()=>this.delete(j)}>
+              <TouchableOpacity style={{flex:1,justifyContent:"flex-end"}} onPress={()=>this.delete(rowData,j)}>
                   <View style={styles.deleteView}>
                      <Image style={styles.deleteIcon} source={require('../icon/delete.png')}/>
                   </View>
@@ -156,7 +255,9 @@ class gouwuche extends Component {
         </View>
         <View style={styles.content}>
           <View style={styles.maiView}>
-              <ListView
+              <AllListView
+                onRefresh={this._onRefresh.bind(this)}
+                count={this.state.count}
                 dataSource={this.state.dataSource}
                 renderRow={this.renderRow.bind(this)}
               />
@@ -174,7 +275,9 @@ class gouwuche extends Component {
               <Text style={{color:'#fff',fontSize:Size(18)}}>提交订单</Text>
             </TouchableOpacity>
           </View>
+           <LoadingShow loading={this.state.loadingWait} text={this.state.loadingWaitText} />
         </View>
+        
       </View>
     );
   }

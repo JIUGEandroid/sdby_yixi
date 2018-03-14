@@ -18,9 +18,15 @@ class hompage extends Component {
  constructor(props) {
   	  super(props);
   	  this.state = {
-  	  	selectedTab:"shangcheng",
+  	  	selectedTab:this.props.param.index?this.props.param.index:"shangcheng",
   	  };
   	}
+
+    callBack(tab){
+      this.setState({
+        selectedTab: tab,
+      });
+    }
 
   	renderItem(selectedTab,title,icon,selectIcon,Component){
   		return(
@@ -39,7 +45,7 @@ class hompage extends Component {
 	            renderSelectedIcon={() => <Image style={styles.icon} source={selectIcon} />}
 	            //点击Event
 	            onPress={() => this.setState({ selectedTab:selectedTab })}>
-	           <Component navigator={this.props.navigator}/>
+	           <Component navigator={this.props.navigator} callBack={this.callBack.bind(this)}/>
 	        </TabNavigator.Item>
   			);
 

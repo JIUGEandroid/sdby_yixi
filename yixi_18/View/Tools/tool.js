@@ -1,9 +1,13 @@
+
+
+import React, { Component } from 'react';
 import {
     PixelRatio,
     Platform,
     AsyncStorage,
     NetInfo,
-    Keyboard
+    Keyboard,
+    RefreshControl
 } from 'react-native';
 
 var Tools={
@@ -35,6 +39,20 @@ var Tools={
         } else {
             return false;
         }
+    },
+    /**
+     * scrollview 下拉刷新控制器
+     * @param isRefreshing
+     * @param _onRefresh
+     * @returns {XML}
+     */
+    intiRefresh: function (isRefreshing, _onRefresh) {
+        return <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={_onRefresh}
+            tintColor="#ff5400"
+            title="Loading..."
+            colors={['#ff5400','#0db789']}/>
     },
     dopost:function(url, data, successCallBaack, errCallBack){    
         Keyboard.dismiss()    

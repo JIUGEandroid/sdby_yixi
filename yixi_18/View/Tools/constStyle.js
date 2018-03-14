@@ -1,9 +1,11 @@
 'use strict';
 import {
   StyleSheet,
-
+	Dimensions,
 } from 'react-native';
 import {Size} from "./constStr.js";
+var screenWidth=Dimensions.get('window').width;
+var screenHeight=Dimensions.get('window').height;
 module.exports = StyleSheet.create({
 	inputView:{
 		flexDirection:'row',
@@ -27,4 +29,16 @@ module.exports = StyleSheet.create({
 		height:1,
 		backgroundColor:'rgb(227,227,235)'
 	},
+	listFooter:{
+		justifyContent:"center",
+		alignItems:'center',
+		width:screenWidth,
+		padding:5,
+		marginBottom:5
+	},
+	container:{
+		flex:1,
+		width:screenWidth,
+		backgroundColor:'#f4f4f4'
+	}
 });

@@ -23,6 +23,12 @@ class navTitle extends Component {
 		}
 	}
 
+	rightCallBack(){
+		if(this.props.rightCallBack){
+			this.props.rightCallBack();
+		}
+	}
+
   render() {
     return (
       <View style={styles.container}>
@@ -31,10 +37,12 @@ class navTitle extends Component {
       		<Text style={styles.textBack}>返回</Text>
       	</TouchableOpacity>
       	<View style={styles.titleView}>
-      		<Text style={styles.title}>{this.props.title?this.props.title:"title"}</Text>
+      		<Text style={styles.title}>{this.props.title?this.props.title:""}</Text>
       	</View>
-      	<View style={styles.right}>
-      	</View>
+      	<TouchableOpacity style={styles.right} onPress={this.rightCallBack.bind(this)}>
+      		{this.props.rightText&&<Text style={styles.textBack}>{this.props.rightText}</Text>}
+      		{this.props.rightImage&&<Image style={styles.imgBack} source={this.props.rightImage}/>}
+      	</TouchableOpacity>
       </View>
     );
   }
@@ -80,7 +88,11 @@ const styles = StyleSheet.create({
 		//backgroundColor:'blue'
 	},
 	right:{
-		width:70
+		flexDirection:'row',
+		width:70,
+		height:45,
+		justifyContent:'center',
+		alignItems:'center',
 	}
 });
 

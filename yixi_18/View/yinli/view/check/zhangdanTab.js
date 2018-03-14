@@ -26,7 +26,7 @@ class zhangdanTab extends Component {
 	renderTabOption(tab, i) {
 		let color = this.props.activeTab == i ? "#1296db" : "gray"; // 判断i是否是当前选中的tab，设置不同的颜色
 		return (
-			<TouchableOpacity onPress={()=>this.props.goToPage(i)} style={styles.tab}>
+			<TouchableOpacity onPress={()=>this.props.goToPage(i)} style={styles.tab} key={i}>
 				<View style={styles.tabItem}>
 					<Image style={styles.icon} source={this.props.tabIconNames[i]}/>
 					<Text style={{color: color}}>
